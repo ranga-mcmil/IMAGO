@@ -2,16 +2,17 @@ import { Suspense } from "react"
 import { MainLayout } from "@/components/main-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ShopsTable } from "@/components/shops-table"
 import { ShopsTableSkeleton } from "@/components/shops-table-skeleton"
 import Link from "next/link"
+import { ShopsContainer } from "./shops-container"
 
-export default function ShopsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
-  const page = typeof searchParams.page === "string" ? Number.parseInt(searchParams.page) : 1
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function ShopsPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams
+  const page = typeof resolvedSearchParams.page === "string" ? Number.parseInt(resolvedSearchParams.page) || 1 : 1
   const perPage = 10
 
   return (
@@ -37,7 +38,7 @@ export default function ShopsPage({
 
         <div className="bg-white border rounded-md overflow-hidden">
           <Suspense fallback={<ShopsTableSkeleton />}>
-            <ShopsTable page={page} perPage={perPage} />
+            <ShopsContainer page={page} perPage={perPage} />
           </Suspense>
         </div>
       </div>
