@@ -1,26 +1,38 @@
+import { Suspense } from "react"
 import { MainLayout } from "@/components/main-layout"
-import { ShoppingBag } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { OrdersTableSkeleton } from "@/components/orders-table-skeleton"
+import { OrdersContainer } from "./orders-container"
+import { AdminOrderActions } from "@/components/admin-order-actions"
 
-export default function OrdersPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function OrdersPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams
+  const page = typeof resolvedSearchParams.page === "string" ? Number.parseInt(resolvedSearchParams.page) || 1 : 1
+  const perPage = 10
+
   return (
     <MainLayout>
-      <div className="p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-maroon">Orders</h1>
-          <Button size="sm" variant="outline">
-            Create
-          </Button>
+      <div className="p-4 lg:p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-semibold text-maroon">Orders</h1>
+            <p className="text-xs text-gray-500 mt-1">View and manage your orders</p>
+          </div>
+          <AdminOrderActions />
         </div>
 
-        <div className="flex flex-col items-center justify-center py-12 bg-white border rounded-md">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 mb-3">
-            <ShoppingBag className="h-6 w-6 text-gray-400" />
-          </div>
-          <div className="text-center">
-            <h3 className="text-sm font-medium">No orders yet</h3>
-            <p className="text-xs text-gray-500 mt-1">Orders will appear here</p>
-          </div>
+        <div className="flex justify-end">
+          <Input placeholder="Search orders" className="w-full sm:w-[250px] h-9" />
+        </div>
+
+        <div className="bg-white border rounded-md overflow-hidden">
+          <Suspense fallback={<OrdersTableSkeleton />}>
+            <OrdersContainer page={page} perPage={perPage} />
+          </Suspense>
         </div>
       </div>
     </MainLayout>
