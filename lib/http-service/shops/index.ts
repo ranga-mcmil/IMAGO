@@ -4,6 +4,8 @@ import { BaseAPIRequests } from "@/lib/http-service/baseAPIRequests";
 import { 
   CreateCategoryResponse, 
   GetCategoriesResponse,
+  GetShopsResponse,
+  PaginationParams,
   UpdateCategoryPayload,
   UpdateCategoryResponse,
   UploadCategoryIconResponse
@@ -12,6 +14,29 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/next-auth-options";
 
 export class ShopsService extends BaseAPIRequests {
+  async getShops(pagination?: Partial<PaginationParams>): Promise<APIResponse<GetShopsResponse>> {
+    const params = new URLSearchParams({
+      pageNo: (pagination?.pageNo ?? 0).toString(),
+      pageSize: (pagination?.pageSize ?? 10).toString(),
+      sortBy: pagination?.sortBy ?? 'name',
+      sortDir: pagination?.sortDir ?? 'asc',
+    });
+
+    const url = `/api/shops?${params.toString()}`;
+
+    try {
+      const session = await getServerSession(authOptions);
+      const headers = await this.apiHeaders.getHeaders(session);
+      const response = await this.client.get(url, { headers });
+      return this.handleResponse<GetShopsResponse>(response);
+    } catch (error) {
+      console.error('Shops Main Service request failed:', error);
+      return {
+        success: false,
+        error: (error as Error).message || 'An unknown error occurred',
+      };
+    }
+  }
   
   async getCategories(): Promise<APIResponse<GetCategoriesResponse>> {
     const url = '/api/categories';

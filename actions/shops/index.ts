@@ -2,15 +2,36 @@
 
 import { APIResponse } from "@/lib/http-service/apiClient"; 
 import { shopsService } from "@/lib/http-service/shops";
-import { CreateCategorySchema, UpdateCategorySchema } from "@/lib/http-service/shops/schema";
+import { CreateCategorySchema, PaginationSchema, UpdateCategorySchema } from "@/lib/http-service/shops/schema";
 import { 
   CreateCategoryPayload, 
   CreateCategoryResponse, 
   GetCategoriesResponse,
+  GetShopsResponse,
+  PaginationParams,
   UpdateCategoryPayload,
   UpdateCategoryResponse,
 } from "@/lib/http-service/shops/types";
 import { revalidatePath } from "next/cache";
+
+// Get All Shops (with pagination)
+export async function getShopsAction(
+  pagination?: Partial<PaginationParams>
+): Promise<APIResponse<GetShopsResponse>> {
+  // Validate pagination if provided
+  if (pagination) {
+    const paginationValidation = PaginationSchema.partial().safeParse(pagination);
+    if (!paginationValidation.success) {
+      return {
+        success: false,
+        error: 'Invalid pagination parameters',
+        fieldErrors: paginationValidation.error.flatten().fieldErrors,
+      };
+    }
+  }
+
+  return await shopsService.getShops(pagination);
+}
 
 export async function createCategoryAction(
   initialData: any, 

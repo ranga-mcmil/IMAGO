@@ -1,17 +1,18 @@
 import { Suspense } from "react"
-
 import { MainLayout } from "@/components/main-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ProductsTableSkeleton } from "@/components/products-table-skeleton"
-import { ProductsTable } from "@/components/products-table"
+import Link from "next/link"
+import { ProductsContainer } from "./products-container"
 
-export default function ProductsPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
-  const page = typeof searchParams.page === "string" ? Number.parseInt(searchParams.page) : 1
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function ProductsPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams
+  const page = typeof resolvedSearchParams.page === "string" ? Number.parseInt(resolvedSearchParams.page) || 1 : 1
   const perPage = 10
 
   return (
@@ -26,9 +27,11 @@ export default function ProductsPage({
             <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
               Import
             </Button>
-            <Button size="sm" className="bg-maroon hover:bg-maroon/90 text-white flex-1 sm:flex-none">
-              Create
-            </Button>
+            <Link href="/products/create">
+              <Button size="sm" className="bg-maroon hover:bg-maroon/90 text-white flex-1 sm:flex-none">
+                Create
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -60,7 +63,7 @@ export default function ProductsPage({
 
         <div className="bg-white border rounded-md overflow-hidden">
           <Suspense fallback={<ProductsTableSkeleton />}>
-            <ProductsTable page={page} perPage={perPage} />
+            <ProductsContainer page={page} perPage={perPage} />
           </Suspense>
         </div>
       </div>

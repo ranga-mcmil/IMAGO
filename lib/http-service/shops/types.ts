@@ -4,7 +4,8 @@ import {
   CreateCategoryFormSchema,
   UpdateCategorySchema, 
   UploadCategoryIconSchema,
-  UpdateBranchSchema 
+  UpdateBranchSchema,
+  PaginationSchema
 } from "./schema";
 
 // Payload types (input)
@@ -29,3 +30,36 @@ export type UpdateCategoryResponse = Category;
 export type UploadCategoryIconResponse = {
   [key: string]: string;
 };
+
+
+// S HO P S
+
+// Payload types (input)
+export type PaginationParams = z.infer<typeof PaginationSchema>;
+
+// Response types (based on OpenAPI spec)
+export type Shop = {
+  id: string;
+  name: string;
+  description: string;
+  email: string;
+  phoneNumber: string;
+  shopCategoryId: number;
+  shopCategoryName: string;
+  logo: string;
+  location: string;
+  active: boolean;
+};
+
+// Pagination response wrapper
+export type PaginatedResponse<T> = {
+  content: T[];
+  pageNo: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+};
+
+// API Response types
+export type GetShopsResponse = PaginatedResponse<Shop>;
