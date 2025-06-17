@@ -23,17 +23,12 @@ export class APIClient {
     this.baseUrl = baseUrl;
   }
 
-
   private async request<T>(url: string, options: RequestInit): Promise<APIResponse<T>> {
     const response = await fetch(`${this.baseUrl}${url}`, options);
     console.log('APIClient TO::::', `${this.baseUrl}${url}`)
-
     console.log('APIClient RESPONSE:', response)
 
     if (!response.ok) {
-      // const errorData = await response.json();
-      // console.error('Error sending data to external API:', errorData);
-
       const contentType = response.headers.get('content-type');
       const jsonContentType = 'application/json; charset=utf-8';
       
@@ -45,9 +40,32 @@ export class APIClient {
       }
     }
 
+    // Check if response has content to parse
+    const contentType = response.headers.get('content-type');
+    const contentLength = response.headers.get('content-length');
     
-    const data = await response.json();
-    return { success: true, data };
+    // If no content-type, content-length is 0, or status is 204 (No Content), don't try to parse JSON
+    if (!contentType || 
+        contentLength === '0' || 
+        response.status === 204 ||
+        !contentType.includes('application/json')) {
+      return { success: true, data: undefined as T };
+    }
+
+    // Check if response body is empty
+    const text = await response.text();
+    if (!text || text.trim() === '') {
+      return { success: true, data: undefined as T };
+    }
+
+    try {
+      const data = JSON.parse(text);
+      return { success: true, data };
+    } catch (error) {
+      // If JSON parsing fails, but response was successful, return success with no data
+      console.warn('Failed to parse JSON response, but request was successful:', error);
+      return { success: true, data: undefined as T };
+    }
   }
 
   async get<T>(url: string, options: RequestInit = {}): Promise<APIResponse<T>> {
@@ -66,6 +84,15 @@ export class APIClient {
   async patch<T>(url: string, data: unknown, options: RequestInit = {}): Promise<APIResponse<T>> {
     return this.request<T>(url, {
       method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+      ...options,
+    });
+  }
+
+  async put<T>(url: string, data: unknown, options: RequestInit = {}): Promise<APIResponse<T>> {
+    return this.request<T>(url, {
+      method: 'PUT',
       body: JSON.stringify(data),
       headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
       ...options,

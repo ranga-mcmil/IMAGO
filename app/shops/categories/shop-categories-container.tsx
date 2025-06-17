@@ -1,5 +1,5 @@
-import { getShopCategories } from "@/app/actions/category-actions"
-import { ClientShopCategoriesTable } from "@/components/client-shop-categories-table"
+import { getCategoriesAction } from "@/actions/shops";
+import { ClientShopCategoriesTable } from "@/components/client-shop-categories-table";
 
 export async function ShopCategoriesContainer({
   page,
@@ -9,14 +9,24 @@ export async function ShopCategoriesContainer({
   perPage: number
 }) {
   try {
-    // Fetch categories from server action
-    const allCategories = await getShopCategories()
+    // Fetch categories from real API
+    const response = await getCategoriesAction();
+    
+    if (!response.success) {
+      return (
+        <div className="p-4 text-center text-red-600">
+          Error loading categories: {response.error}
+        </div>
+      );
+    }
+
+    const allCategories = response.data || [];
 
     // Calculate pagination
-    const totalCategories = allCategories.length
-    const startIndex = (page - 1) * perPage
-    const endIndex = startIndex + perPage
-    const paginatedCategories = allCategories.slice(startIndex, endIndex)
+    const totalCategories = allCategories.length;
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedCategories = allCategories.slice(startIndex, endIndex);
 
     return (
       <ClientShopCategoriesTable
@@ -25,8 +35,13 @@ export async function ShopCategoriesContainer({
         perPage={perPage}
         totalCategories={totalCategories}
       />
-    )
+    );
   } catch (error) {
-    return <div className="p-4 text-center text-red-600">Error loading categories. Please try again.</div>
+    console.error('Error in ShopCategoriesContainer:', error);
+    return (
+      <div className="p-4 text-center text-red-600">
+        Error loading categories. Please try again.
+      </div>
+    );
   }
 }

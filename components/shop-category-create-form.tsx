@@ -12,7 +12,15 @@ import { Button } from "@/components/ui/button"
 import { Upload, CheckCircle2, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createShopCategory, type ShopCategoryFormState } from "@/app/actions/shop-categories"
+import { createCategoryAction } from "@/actions/shops"
+import { APIResponse } from "@/lib/http-service/apiClient"
+import { CreateCategoryPayload, CreateCategoryResponse } from "@/lib/http-service/shops/types"
+
+// Form state type that matches our API response
+type ShopCategoryFormState = APIResponse<CreateCategoryResponse, CreateCategoryPayload> & {
+  success?: boolean
+  message?: string
+}
 
 // This component is used to get the pending state of the form submission
 function SubmitButton() {
@@ -25,16 +33,52 @@ function SubmitButton() {
   )
 }
 
+// Wrapper function to handle the real API call and return compatible state
+async function handleCreateCategory(
+  prevState: ShopCategoryFormState,
+  formData: FormData
+): Promise<ShopCategoryFormState> {
+  try {
+    const result = await createCategoryAction(null, formData)
+    
+    if (result.success) {
+      return {
+        ...result,
+        success: true,
+        message: "Shop category created successfully",
+      }
+    } else {
+      return {
+        ...result,
+        success: false,
+        message: result.error || "Failed to create shop category",
+        errors: result.fieldErrors ? {
+          name: result.fieldErrors.name || [],
+          description: result.fieldErrors.description || [],
+          icon: result.fieldErrors.icon || [],
+        } : undefined,
+      }
+    }
+  } catch (error) {
+    console.error('Error creating category:', error)
+    return {
+      success: false,
+      error: "An unexpected error occurred",
+      message: "Failed to create shop category. Please try again.",
+    }
+  }
+}
+
 export function ShopCategoryCreateForm() {
   const router = useRouter()
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
+  const [iconFile, setIconFile] = useState<File | null>(null)
+  const [iconPreview, setIconPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const initialState: ShopCategoryFormState = {}
-  const [state, formAction] = useActionState(createShopCategory, initialState)
+  const initialState: ShopCategoryFormState = { success: false }
+  const [state, formAction] = useActionState(handleCreateCategory, initialState)
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
@@ -47,10 +91,23 @@ export function ShopCategoryCreateForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setThumbnailFile(file)
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+      if (!validTypes.includes(file.type)) {
+        alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)')
+        return
+      }
+
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB')
+        return
+      }
+
+      setIconFile(file)
       const reader = new FileReader()
       reader.onload = () => {
-        setThumbnailPreview(reader.result as string)
+        setIconPreview(reader.result as string)
       }
       reader.readAsDataURL(file)
     }
@@ -90,11 +147,11 @@ export function ShopCategoryCreateForm() {
                 id="name"
                 name="name"
                 placeholder="Category name"
-                className={`mt-2 w-full ${state?.errors?.name ? "border-red-500" : ""}`}
+                className={`mt-2 w-full ${state?.fieldErrors?.name ? "border-red-500" : ""}`}
                 value={name}
                 onChange={handleNameChange}
               />
-              {state?.errors?.name && <p className="text-sm text-red-500 mt-1">{state.errors.name[0]}</p>}
+              {state?.fieldErrors?.name && <p className="text-sm text-red-500 mt-1">{state.fieldErrors.name[0]}</p>}
             </div>
 
             <div>
@@ -105,34 +162,38 @@ export function ShopCategoryCreateForm() {
                 id="description"
                 name="description"
                 placeholder="Category description"
-                className={`mt-2 min-h-[120px] w-full ${state?.errors?.description ? "border-red-500" : ""}`}
+                className={`mt-2 min-h-[120px] w-full ${state?.fieldErrors?.description ? "border-red-500" : ""}`}
                 value={description}
                 onChange={handleDescriptionChange}
               />
-              {state?.errors?.description && <p className="text-sm text-red-500 mt-1">{state.errors.description[0]}</p>}
+              {state?.fieldErrors?.description && <p className="text-sm text-red-500 mt-1">{state.fieldErrors.description[0]}</p>}
             </div>
 
             <div>
-              <Label className="text-base font-medium">Thumbnail</Label>
+              <Label className="text-base font-medium">Icon</Label>
               <input
                 ref={fileInputRef}
                 type="file"
-                name="thumbnail"
-                accept="image/*"
+                name="icon"
+                accept="image/jpeg,image/png,image/gif,image/webp"
                 className="hidden"
                 onChange={handleFileChange}
               />
-              {thumbnailPreview ? (
+              {iconPreview ? (
                 <div className="mt-2 border rounded-md p-4 flex items-center">
                   <div className="flex-shrink-0 mr-4">
                     <img
-                      src={thumbnailPreview || "/placeholder.svg"}
-                      alt="Thumbnail preview"
+                      src={iconPreview}
+                      alt="Icon preview"
                       className="w-24 h-24 object-cover rounded-md"
                     />
                   </div>
                   <div className="flex flex-col flex-grow">
-                    <p className="text-sm text-gray-600 mb-2">Image uploaded successfully</p>
+                    <p className="text-sm text-gray-600 mb-2">Icon uploaded successfully</p>
+                    <div className="text-xs text-gray-500 mb-2">
+                      <p>{iconFile?.name}</p>
+                      <p>{iconFile && (iconFile.size / 1024).toFixed(1)} KB</p>
+                    </div>
                     <Button
                       type="button"
                       variant="outline"
@@ -140,7 +201,7 @@ export function ShopCategoryCreateForm() {
                       className="self-start"
                       onClick={handleUploadClick}
                     >
-                      Change image
+                      Change icon
                     </Button>
                   </div>
                 </div>
@@ -150,13 +211,17 @@ export function ShopCategoryCreateForm() {
                     <Upload className="h-5 w-5 text-gray-400" />
                   </div>
                   <p className="text-sm text-center text-muted-foreground">
-                    Drag and drop an image here, or click to browse
+                    Drag and drop an icon here, or click to browse
+                  </p>
+                  <p className="text-xs text-center text-muted-foreground mt-1">
+                    JPEG, PNG, GIF, WebP - Max 5MB
                   </p>
                   <Button type="button" variant="outline" size="sm" className="mt-4" onClick={handleUploadClick}>
-                    Upload image
+                    Upload icon
                   </Button>
                 </div>
               )}
+              {state?.fieldErrors?.icon && <p className="text-sm text-red-500 mt-1">{state.fieldErrors.icon[0]}</p>}
             </div>
 
             {state?.message && !state.success && (
