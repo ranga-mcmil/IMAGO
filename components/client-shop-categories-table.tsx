@@ -46,6 +46,7 @@ export function ClientShopCategoriesTable({
   const handleDelete = async (id: number) => {
     try {
       const result = await deleteCategoryAction(id)
+      
       return {
         success: result.success,
         message: result.success ? "Category deleted successfully" : (result.error || "Failed to delete category")
@@ -102,19 +103,20 @@ export function ClientShopCategoriesTable({
             categories.map((category) => (
               <TableRow key={category.id} className="hover:bg-gray-50">
                 <TableCell>
-                  {category.iconUrl ? (
+                  {/* {category.iconUrl ? (
                     <div className="w-8 h-8 rounded border overflow-hidden bg-gray-50">
                       <img 
                         src={category.iconUrl} 
                         alt={`${category.name} icon`}
                         className="w-full h-full object-cover"
                       />
+                      
                     </div>
-                  ) : (
+                  ) : ( */}
                     <div className="flex h-8 w-8 items-center justify-center rounded bg-gray-100">
                       <FolderKanban className="h-4 w-4 text-gray-400" />
                     </div>
-                  )}
+                  {/* )} */}
                 </TableCell>
                 <TableCell className="font-medium text-sm">
                   <span>{category.name}</span>

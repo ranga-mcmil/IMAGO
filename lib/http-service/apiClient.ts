@@ -25,14 +25,14 @@ export class APIClient {
 
   private async request<T>(url: string, options: RequestInit): Promise<APIResponse<T>> {
     const response = await fetch(`${this.baseUrl}${url}`, options);
-
+   
     if (!response.ok) {
       const contentType = response.headers.get('content-type');
       const jsonContentType = 'application/json; charset=utf-8';
       
       if (jsonContentType.includes(contentType!)) {
-          // const data = await response.json();          
-          // return { success: false, error: data.detail, data: data };
+          const data = await response.json();          
+          return { success: false, error: data.detail, data: data };
       } else {
           return { success: false, error: `${response.statusText}`, data: undefined };
       }
@@ -62,7 +62,7 @@ export class APIClient {
     } catch (error) {
       // If JSON parsing fails, but response was successful, return success with no data
       console.warn('Failed to parse JSON response, but request was successful:', error);
-      return { success: true, data: undefined as T };
+      return { success: false, data: undefined as T };
     }
   }
 

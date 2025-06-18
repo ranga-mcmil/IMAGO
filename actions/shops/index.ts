@@ -127,22 +127,6 @@ export async function updateCategoryAction(
 
   const response = await shopsService.updateCategory(validatedData.data, categoryId);
 
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log(response)
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-  console.log("%%%")
-
-
   if (response.success) {
     revalidatePath('/categories');
     revalidatePath(`/categories/${categoryId}`);
@@ -161,6 +145,21 @@ export async function updateCategoryAction(
 
 export async function deleteCategoryAction(categoryId: number): Promise<APIResponse<void>> {
   const response = await shopsService.deleteCategory(categoryId);
+
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log(response)
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+  console.log("@#@#@#@#@#@#@#")
+
   
   if (response.success) {
     revalidatePath('/categories');
