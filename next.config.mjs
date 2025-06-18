@@ -8,6 +8,14 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '82.25.119.4',
+        port: '1900',
+        pathname: '/file/shop/**',
+      },
+    ],
   },
 }
 

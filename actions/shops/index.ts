@@ -127,6 +127,22 @@ export async function updateCategoryAction(
 
   const response = await shopsService.updateCategory(validatedData.data, categoryId);
 
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log(response)
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+  console.log("%%%")
+
+
   if (response.success) {
     revalidatePath('/categories');
     revalidatePath(`/categories/${categoryId}`);

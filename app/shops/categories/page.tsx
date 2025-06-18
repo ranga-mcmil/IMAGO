@@ -23,9 +23,6 @@ export default function ShopCategoriesPage({ searchParams }: PageProps) {
             <p className="text-xs text-gray-500 mt-1">Organize your shops by category</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline" size="sm" className="w-full sm:w-auto">
-              Edit ranking
-            </Button>
             <div>
               <Link href="/shops/categories/create">
                 <Button size="sm" className="bg-maroon hover:bg-maroon/90 text-white w-full sm:w-auto">

@@ -88,7 +88,7 @@ export class ShopsService extends BaseAPIRequests {
     try {
       const session = await getServerSession(authOptions);
       const headers = await this.apiHeaders.getHeaders(session);
-      const response = await this.client.patch(url, payload, { headers });
+      const response = await this.client.put(url, payload, { headers });
       return this.handleResponse<UpdateCategoryResponse>(response);
     } catch (error) {
       console.error('Shops Service request failed:', error);
