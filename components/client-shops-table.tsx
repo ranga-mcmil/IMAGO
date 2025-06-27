@@ -136,20 +136,16 @@ export function ClientShopsTable({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link href={`/shops/${shop.id}`}>
-                          View Details
-                        </Link>
+                      <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                        View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href={`/shops/${shop.id}/edit`}>
-                          Edit
-                        </Link>
+                      <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                        Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
                         Duplicate
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">
+                      <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -207,20 +203,16 @@ export function ClientShopsTable({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link href={`/shops/${shop.id}`}>
-                      View Details
-                    </Link>
+                  <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                    View Details
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={`/shops/${shop.id}/edit`}>
-                      Edit
-                    </Link>
+                  <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                    Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
                     Duplicate
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-600">
+                  <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>

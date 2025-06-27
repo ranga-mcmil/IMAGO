@@ -183,18 +183,16 @@ export function ClientProductsTable({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={`/products/${product.id}`}>
-                            View Details
-                          </Link>
+                        <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                          View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/products/${product.id}/edit`}>
-                            Edit
-                          </Link>
+                        <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                          Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                          Duplicate
+                        </DropdownMenuItem>
+                        <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -259,18 +257,16 @@ export function ClientProductsTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <Link href={`/products/${product.id}`}>
-                        View Details
-                      </Link>
+                    <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                      View Details
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href={`/products/${product.id}/edit`}>
-                        Edit
-                      </Link>
+                    <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                      Edit
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">
+                    <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
+                      Duplicate
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled className="text-gray-400 cursor-not-allowed">
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
