@@ -60,7 +60,7 @@ export function SignInForm() {
     if (signInResponse?.ok) {
       toast({
         title: "Login successful",
-        description: "Welcome to RoofStar Industries POS",
+        description: "Welcome to Imago",
       })
       router.push(signInResponse?.url ?? '/');
     } else {
