@@ -20,25 +20,11 @@ export default async function ProductsPage({ searchParams }: PageProps) {
       <div className="p-4 lg:p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="text-xl font-semibold text-maroon">Products</h1>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-              Export
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-              Import
-            </Button>
-            <Link href="/products/create">
-              <Button size="sm" className="bg-maroon hover:bg-maroon/90 text-white flex-1 sm:flex-none">
-                Create
-              </Button>
-            </Link>
-          </div>
+          
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <Button variant="outline" size="sm" className="w-full sm:w-auto">
-            Filters
-          </Button>
+          <span></span>
           <div className="flex items-center gap-2">
             <Input placeholder="Search products" className="w-full sm:w-[250px] h-9" />
             <Button variant="outline" size="icon" className="h-9 w-9 flex-shrink-0">

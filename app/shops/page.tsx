@@ -23,13 +23,13 @@ export default async function ShopsPage({ searchParams }: PageProps) {
             <h1 className="text-xl font-semibold text-maroon">Shops</h1>
             <p className="text-xs text-gray-500 mt-1">Manage your retail and online shops</p>
           </div>
-          <div>
+          {/* <div>
             <Link href="/shops/create">
               <Button size="sm" className="bg-maroon hover:bg-maroon/90 text-white w-full sm:w-auto">
                 Create
               </Button>
             </Link>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex justify-end">

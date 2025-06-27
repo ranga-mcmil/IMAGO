@@ -25,13 +25,13 @@ export default async function AdvertsPage({ searchParams }: AdvertsPageProps) {
             <h1 className="text-xl font-semibold text-maroon">Adverts</h1>
             <p className="text-xs text-gray-500 mt-1">Manage your advertising campaigns</p>
           </div>
-          <div>
+          {/* <div>
             <Link href="/adverts/create">
               <Button size="sm" className="bg-maroon hover:bg-maroon/90 text-white w-full sm:w-auto">
                 Create
               </Button>
             </Link>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
