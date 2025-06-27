@@ -1,34 +1,57 @@
-"use client"
-
-import { useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Suspense } from "react"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth/next-auth-options"
 import { ProfileGeneral } from "@/components/profile-general"
 import { ProfileSecurity } from "@/components/profile-security"
-import { ProfileNotifications } from "@/components/profile-notifications"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertCircle } from "lucide-react"
+import { ProfileTabsNavigation } from "./profile-tabs-navigation"
 
-export function ProfileSettings() {
-  const router = useRouter()
-  const pathname = usePathname()
+interface ProfileSettingsProps {
+  activeTab?: "general" | "security"
+}
 
-  // Determine active tab based on the current path
-  const getActiveTab = () => {
-    if (pathname.includes("/profile/security")) return "security"
-    if (pathname.includes("/profile/notifications")) return "notifications"
-    return "general"
+export async function ProfileSettings({ activeTab = "general" }: ProfileSettingsProps) {
+  const session = await getServerSession(authOptions)
+
+  // Show error state if user is not authenticated
+  if (!session) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-maroon">Profile Settings</h1>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-500" />
+              Authentication Required
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              You must be logged in to access your profile settings. Please sign in and try again.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
-  const [activeTab, setActiveTab] = useState(getActiveTab())
-
-  // Handle tab change
-  const handleTabChange = (value: string) => {
-    setActiveTab(value)
-
-    // Update the URL based on the selected tab
-    if (value === "general") {
-      router.push("/profile")
-    } else {
-      router.push(`/profile/${value}`)
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "security":
+        return (
+          <Suspense fallback={<ProfileTabLoading />}>
+            <ProfileSecurity />
+          </Suspense>
+        )
+      default:
+        return (
+          <Suspense fallback={<ProfileTabLoading />}>
+            <ProfileGeneral />
+          </Suspense>
+        )
     }
   }
 
@@ -36,27 +59,36 @@ export function ProfileSettings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-maroon">Profile Settings</h1>
+        <div className="text-sm text-muted-foreground">
+          Welcome, {session.user?.email || "User"}
+        </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
+      <ProfileTabsNavigation activeTab={activeTab} />
+      
+      <div className="mt-6">
+        {renderTabContent()}
+      </div>
+    </div>
+  )
+}
 
-        <TabsContent value="general">
-          <ProfileGeneral />
-        </TabsContent>
-
-        <TabsContent value="security">
-          <ProfileSecurity />
-        </TabsContent>
-
-        <TabsContent value="notifications">
-          <ProfileNotifications />
-        </TabsContent>
-      </Tabs>
+// Loading component for tab content
+function ProfileTabLoading() {
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Loading...</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse space-y-4">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
