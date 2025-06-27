@@ -6,7 +6,8 @@ export default function SignInPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-8">
-          <img src="/images/imago-full-logo.jpg" alt="Imago Logo" className="h-12 object-contain" />
+          <img src="/images/main_logo_maroon.png" alt="Imago Logo" className="h-12 object-contain" />
+          
         </div>
 
         <Card className="border shadow-sm">
